@@ -14,16 +14,6 @@ public class Utils {
 	private static final Logger log = LogManager.getLogger(Utils.class.getName());
 	public static final String REGEXP_BAD_CHARACTER = "^[А-Яа-я0-9]+$";
 
-	public static void main(String[] args) {
-		System.out.println(isBadCharacter("ппппd"));
-	}
-
-	public static boolean isFileNameCorrect(String name) {
-		Pattern pattern = Pattern.compile("(.+)?[><\\|\\?*/:\\\\\"](.+)?");
-		Matcher matcher = pattern.matcher(name);
-		return !matcher.find();
-	}
-
 	/**
 	 * Проверяет на соотвествие текста валидным символам
 	 * @param word слово
@@ -66,6 +56,6 @@ public class Utils {
 			}
 		}
 		return res;
-		//return str.split([ .,:;!?]+);
+		//return str.split([ .,:;!?()<>\\n\\r\\t]+);
 	}
 }

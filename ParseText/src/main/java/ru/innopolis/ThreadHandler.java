@@ -22,7 +22,7 @@ public class ThreadHandler extends Thread {
 
 	private String resource;
 	private byte number;
-	Indicator indicator;
+	private Indicator indicator;
 	private TreeSet<String> words;
 	private boolean stoped;
 
@@ -38,8 +38,6 @@ public class ThreadHandler extends Thread {
 	@Override
 	public void run() {
 		log.info("Start thread - " + this.number);
-
-		log.info("Synchronized indicator - " + this.number);
 		try {
 			Thread.sleep(100);
 		}
@@ -50,40 +48,76 @@ public class ThreadHandler extends Thread {
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
 			try {
-
 				String strFormFile;
-				while(!indicator.isDuplicate() && !indicator.isBadCharacter() && !this.stoped) {
+				boolean isDuplicate;
+				boolean isBadCharacter;
+				String wordsStr;
+				int wordsStrLen;
+				synchronized (indicator) {
+					isDuplicate = indicator.isDuplicate();
+					isBadCharacter = indicator.isBadCharacter();
+				}
+				while(!isDuplicate && !isBadCharacter && !this.stoped) {
 					strFormFile = in.readLine();
 					if (strFormFile == null) {
 						this.stoped = true;
 					} else {
-						//while ((strFormFile = in.readLine()) != null) {
 						List<String> wordsFromStr = Utils.getWordsFromString(strFormFile);
 						for (String word : wordsFromStr) {
 							if (Utils.isBadCharacter(word)) {
 								synchronized (indicator) {
 									indicator.setBadCharacter(true);
 								}
-								log.warn("Thread: " + this.number + " The thread will be stopped on this collection: " + words.toString());
-								throw new BadCharacterException("Thread: " + this.number + " Error: Stop: This word <" + word + "> does not pass the validity check.");
+
+								synchronized (words) {
+									wordsStr = words.toString();
+									wordsStrLen = wordsStr.length();
+								}
+								log.warn("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . The thread will be stopped on this collection: " + wordsStr);
+								throw new BadCharacterException("Thread: " + this.number+ ". Number of items in the collection - " + wordsStrLen + " . Error: Stop: This word <" + word + "> does not pass the validity check.");
 							} else {
 
-								if (Utils.isContainsWordInCollection(word, words)) {
-									synchronized (indicator) {
-										indicator.setDuplicate(true);
-									}
-									throw new DubplicationException("Thread: " + this.number + " This word <" + word + "> already exists in the repository. The thread will be stopped on this collection: " + words.toString());
-								} else {
-									synchronized (indicator) {
+								synchronized (words) {
+
+									if (Utils.isContainsWordInCollection(word, words)) {
+										synchronized (indicator) {
+											indicator.setDuplicate(true);
+										}
+										wordsStr = words.toString();
+										wordsStrLen = wordsStr.length();
+										throw new DubplicationException("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . This word <" + word + "> already exists in the repository.  The thread will be stopped on this collection: " + wordsStr);
+									} else {
 										words.add(word);
+										wordsStr = words.toString();
+										wordsStrLen = wordsStr.length();
+										log.info("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . Added word <" + word + ">. The collection contains the following elements:" + wordsStr);
 									}
-									log.info("Thread: " + this.number + ". Added word <" + word + ">. The collection contains the following elements:" + words.toString());
 								}
+
 							}
 						}
 					}
+					synchronized (indicator) {
+						isDuplicate = indicator.isDuplicate();
+						isBadCharacter = indicator.isBadCharacter();
+					}
 				}
-				log.info("Thread: " + this.number + " File was read. The thread on this collection: " + words.toString());
+				synchronized (words) {
+					wordsStr = words.toString();
+					wordsStrLen = wordsStr.length();
+				}
+				if (this.stoped) {
+
+					log.info("Thread: " + this.number +". Number of items in the collection - " + wordsStrLen + " . File was read. The thread on this collection: " + wordsStr);
+				} else {
+					if (isDuplicate) {
+						log.info("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . File was not read. Thread finished from dublicated. The thread on this collection: " + wordsStr);
+					}
+					if (isBadCharacter) {
+						log.info("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . File was not read. Thread finished from bad character. The thread on this collection: " + wordsStr);
+
+					}
+				}
 			}
 			finally {
 				in.close();

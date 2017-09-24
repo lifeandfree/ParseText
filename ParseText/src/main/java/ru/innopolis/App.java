@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Hello world!
  */
 public class App {
 	private static final Logger log = LogManager.getLogger(App.class.getName());

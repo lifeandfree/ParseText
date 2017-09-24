@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -56,6 +57,6 @@ public class Utils {
 			}
 		}
 		return res;
-		//return str.split([ .,:;!?()<>\\n\\r\\t]+);
+		//return new ArrayList<String>(Arrays.asList(str.split("[ .,:;!?()\\n\\r\\t]+"))); TODO
 	}
 }

@@ -53,16 +53,19 @@ public class ThreadHandler extends Thread {
 				boolean isBadCharacter;
 				String wordsStr;
 				int wordsStrLen;
-				synchronized (indicator) {
-					isDuplicate = indicator.isDuplicate();
-					isBadCharacter = indicator.isBadCharacter();
-				}
+				isDuplicate = false;
+				isBadCharacter = false;
+//				synchronized (indicator) {
+//					isDuplicate = indicator.isDuplicate();
+//					isBadCharacter = indicator.isBadCharacter();
+//				}
 				while(!isDuplicate && !isBadCharacter && !this.stoped) {
 					strFormFile = in.readLine();
 					if (strFormFile == null) {
 						this.stoped = true;
 					} else {
 						List<String> wordsFromStr = Utils.getWordsFromString(strFormFile);
+
 						for (String word : wordsFromStr) {
 							if (Utils.isBadCharacter(word)) {
 								synchronized (indicator) {
@@ -71,10 +74,10 @@ public class ThreadHandler extends Thread {
 
 								synchronized (words) {
 									wordsStr = words.toString();
-									wordsStrLen = wordsStr.length();
+									wordsStrLen = words.size();
 								}
 								log.warn("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . The thread will be stopped on this collection: " + wordsStr);
-								throw new BadCharacterException("Thread: " + this.number+ ". Number of items in the collection - " + wordsStrLen + " . Error: Stop: This word <" + word + "> does not pass the validity check.");
+								throw new BadCharacterException("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . Error: Stop: This word <" + word + "> does not pass the validity check.");
 							} else {
 
 								synchronized (words) {
@@ -84,13 +87,21 @@ public class ThreadHandler extends Thread {
 											indicator.setDuplicate(true);
 										}
 										wordsStr = words.toString();
-										wordsStrLen = wordsStr.length();
+										wordsStrLen = words.size();
 										throw new DubplicationException("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . This word <" + word + "> already exists in the repository.  The thread will be stopped on this collection: " + wordsStr);
 									} else {
-										words.add(word);
-										wordsStr = words.toString();
-										wordsStrLen = wordsStr.length();
-										log.info("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . Added word <" + word + ">. The collection contains the following elements:" + wordsStr);
+										synchronized (indicator) {
+											isDuplicate = indicator.isDuplicate();
+											isBadCharacter = indicator.isBadCharacter();
+										}
+										if (isDuplicate || isBadCharacter) {
+											break;
+										} else {
+											words.add(word);
+											wordsStr = words.toString();
+											wordsStrLen = words.size();
+											log.info("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . Added word <" + word + ">. The collection contains the following elements:" + wordsStr);
+										}
 									}
 								}
 
@@ -104,11 +115,11 @@ public class ThreadHandler extends Thread {
 				}
 				synchronized (words) {
 					wordsStr = words.toString();
-					wordsStrLen = wordsStr.length();
+					wordsStrLen = words.size();
 				}
 				if (this.stoped) {
 
-					log.info("Thread: " + this.number +". Number of items in the collection - " + wordsStrLen + " . File was read. The thread on this collection: " + wordsStr);
+					log.info("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . File was read. The thread on this collection: " + wordsStr);
 				} else {
 					if (isDuplicate) {
 						log.info("Thread: " + this.number + ". Number of items in the collection - " + wordsStrLen + " . File was not read. Thread finished from dublicated. The thread on this collection: " + wordsStr);

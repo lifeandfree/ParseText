@@ -1,6 +1,6 @@
 package ru.innopolis.exception;
 
-public class HandlerException extends Exception {
+public class HandlerException extends RuntimeException {
 
 	private String errorCode;
 	private String errorMessage;

@@ -3,17 +3,15 @@ package ru.innopolis;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
 
 public class MainHandler {
 
 	private List<String> resources;
 	private static final Logger log = LogManager.getLogger(MainHandler.class.getName());
-	private Set<ThreadHandler> threadHandlers = new HashSet<ThreadHandler>();
+	private List<ThreadHandler> threadHandlers = new ArrayList<>();
+	private static TreeSet<String> treeSetWords = new TreeSet<>();
 
 	public MainHandler(List<String> resList) {
 
@@ -30,14 +28,15 @@ public class MainHandler {
 
 			if ((new FileHandler()).exists(res)){
 				log.info("Start Thread for " + res + " resource");
-				ThreadHandler threadHandler = new ThreadHandler(res, i);
+				ThreadHandler threadHandler = new ThreadHandler(res, i, indicator, treeSetWords);
 				threadHandler.start();
 				threadHandlers.add(threadHandler);
+				i++;
 			}
 			else {
-				log.error("File " + res + " not found. Continue");
+				log.warn("File " + res + " not found. Continue");
 			}
-			i++;
+
 		}
 
 	}

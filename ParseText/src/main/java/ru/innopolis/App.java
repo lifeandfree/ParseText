@@ -15,9 +15,7 @@ public class App {
 
 	public static void main(String[] args) {
 
-		//String []argss = {};
 		int argsQ = args.length;
-		//int argsQ = argss.length;
 		if (argsQ > 0) {
 			log.info("It's " + argsQ + " resources. I start treatment.");
 			List<String> resList = new ArrayList<String>(Arrays.asList(args));

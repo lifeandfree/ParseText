@@ -1,13 +1,19 @@
 package ru.innopolis;
 
+/**
+ * Класс отвечает за отслеживание статуса потоков.
+ *
+ */
 public class Indicator {
 
 	private boolean isDuplicate;
 	private boolean isBadCharacter;
 
 	public Indicator() {
+
 		this.isDuplicate = false;
 		this.isBadCharacter = false;
+
 	}
 
 	public boolean isDuplicate() {

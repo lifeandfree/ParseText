@@ -8,6 +8,8 @@ public class ThreadHandler extends Thread {
 
 	private String resource;
 	private byte number;
+	Indicator indicator;
+
 
 	public ThreadHandler(String resource, byte i) {
 		this.number = i;
@@ -18,6 +20,9 @@ public class ThreadHandler extends Thread {
 	@Override
 	public void run() {
 		super.run();
+
+
+
 	}
 
 

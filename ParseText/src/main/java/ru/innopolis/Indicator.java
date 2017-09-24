@@ -9,6 +9,11 @@ public class Indicator {
 	private boolean isDuplicate;
 	private boolean isBadCharacter;
 
+	public Indicator(boolean isDuplicate, boolean isBadCharacter) {
+		this.isDuplicate = isDuplicate;
+		this.isBadCharacter = isBadCharacter;
+	}
+
 	public Indicator() {
 
 		this.isDuplicate = false;

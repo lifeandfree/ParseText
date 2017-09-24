@@ -15,12 +15,12 @@ public class App {
 
 	public static void main(String[] args) {
 
-		String []argss = {"1.txt", "2.txt","3.txt","4.txt","5.txt","6.txt"};
-		//int argsQ = args.length;
-		int argsQ = argss.length;
+		//String []argss = {};
+		int argsQ = args.length;
+		//int argsQ = argss.length;
 		if (argsQ > 0) {
 			log.info("It's " + argsQ + " resources. I start treatment.");
-			List<String> resList = new ArrayList<String>(Arrays.asList(argss));
+			List<String> resList = new ArrayList<String>(Arrays.asList(args));
 			MainHandler mainHandler = new MainHandler(resList);
 			mainHandler.startHandler();
 		} else {

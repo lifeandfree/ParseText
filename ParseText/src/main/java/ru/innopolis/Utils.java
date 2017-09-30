@@ -33,7 +33,10 @@ public class Utils {
 	 * @return	true/false
 	 */
 	public static boolean isContainsWordInCollection(String w, Collection c) {
-		return c.contains(w);
+		synchronized (c){
+			return c.contains(w);
+		}
+
 	}
 
 	/**
@@ -49,14 +52,17 @@ public class Utils {
 			if (Character.isAlphabetic(c) || Character.isDigit(c)) {
 				word.append(c);
 			}
-			else{
+			else {
 				if (word.length() > 0){
 					res.add(word.toString());
 					word = new StringBuilder();
 				}
 			}
 		}
+		if (word.length() > 0)
+			res.add(word.toString());
+
 		return res;
-		//return new ArrayList<String>(Arrays.asList(str.split("[ .,:;!?()\\n\\r\\t]+"))); TODO
+		//return new ArrayList<String>(Arrays.asList(str.split("[ .,:;!?()\\n\\r\\t]+")));// TODO
 	}
 }

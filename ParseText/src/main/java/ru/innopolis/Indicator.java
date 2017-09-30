@@ -6,8 +6,8 @@ package ru.innopolis;
  */
 public class Indicator {
 
-	private boolean isDuplicate;
-	private boolean isBadCharacter;
+	private volatile boolean isDuplicate;
+	private volatile boolean isBadCharacter;
 
 	public Indicator(boolean isDuplicate, boolean isBadCharacter) {
 		this.isDuplicate = isDuplicate;

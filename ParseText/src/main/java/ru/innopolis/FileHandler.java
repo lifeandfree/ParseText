@@ -21,7 +21,7 @@ public class FileHandler {
 	 * @param fileName
 	 *            - имя файла.
 	 */
-	public boolean exists(String fileName) {
+	boolean exists(String fileName) {
 		File file = new File(fileName);
 		if (!file.exists()) {
 			log.error("File not found");
@@ -48,7 +48,7 @@ public class FileHandler {
 	 *            {@link File} файл для проверки
 	 * @return true/false
 	 */
-	public boolean isFile(File file) {
+	boolean isFile(File file) {
 		if (!file.isFile()) {
 			log.error("File is not a file");
 			try {
